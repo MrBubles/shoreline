@@ -8,13 +8,11 @@ import net.minecraft.util.math.Vec3d;
 import net.shoreline.client.Shoreline;
 import net.shoreline.client.impl.event.entity.ConsumeItemEvent;
 import net.shoreline.client.impl.event.entity.JumpRotationEvent;
-import net.shoreline.client.impl.event.entity.LevitationEvent;
 import net.shoreline.client.util.Globals;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 /**
@@ -42,7 +40,7 @@ public abstract class MixinLivingEntity extends MixinEntity implements Globals {
 
     @Inject(method = "jump", at = @At(value = "HEAD"), cancellable = true)
     private void hookJump$getYaw(CallbackInfo ci) {
-        if ((LivingEntity) (Object) this != mc.player) {
+        if ((Object) this != mc.player) {
             return;
         }
         final JumpRotationEvent event = new JumpRotationEvent();
@@ -59,22 +57,22 @@ public abstract class MixinLivingEntity extends MixinEntity implements Globals {
         }
     }
 
-    /**
-     * @param instance
-     * @param effect
-     * @return
-     */
-    @Redirect(method = "travel", at = @At(value = "INVOKE", target = "Lnet/" +
-            "minecraft/entity/LivingEntity;hasStatusEffect(Lnet/minecraft/" +
-            "entity/effect/StatusEffect;)Z"))
-    private boolean hookHasStatusEffect(LivingEntity instance, StatusEffect effect) {
-        if (instance.equals(mc.player)) {
-            LevitationEvent levitationEvent = new LevitationEvent();
-            Shoreline.EVENT_HANDLER.dispatch(levitationEvent);
-            return !levitationEvent.isCanceled() && hasStatusEffect(effect);
-        }
-        return hasStatusEffect(effect);
-    }
+//    /**
+//     * @param instance
+//     * @param effect
+//     * @return
+//     */
+//    @Redirect(method = "travel", at = @At(value = "INVOKE", target = "Lnet/" +
+//            "minecraft/entity/LivingEntity;hasStatusEffect(Lnet/minecraft/" +
+//            "entity/effect/StatusEffect;)Z"))
+//    private boolean hookHasStatusEffect(LivingEntity instance, StatusEffect effect) {
+//        if (instance.equals(mc.player)) {
+//            LevitationEvent levitationEvent = new LevitationEvent();
+//            Shoreline.EVENT_HANDLER.dispatch(levitationEvent);
+//            return !levitationEvent.isCanceled() && hasStatusEffect(effect);
+//        }
+//        return hasStatusEffect(effect);
+//    }
 
     /**
      * @param ci

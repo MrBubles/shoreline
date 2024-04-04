@@ -1,7 +1,6 @@
 package net.shoreline.client.impl.event.entity;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
 import net.shoreline.client.api.event.Cancelable;
 import net.shoreline.client.api.event.Event;
 
@@ -12,19 +11,19 @@ import net.shoreline.client.api.event.Event;
 @Cancelable
 public class VelocityMultiplierEvent extends Event {
     //
-    private final BlockState state;
+    private final Block block;
 
     /**
-     * @param state
+     * @param block
      */
-    public VelocityMultiplierEvent(BlockState state) {
-        this.state = state;
+    public VelocityMultiplierEvent(Block block) {
+        this.block = block;
     }
 
     /**
      * @return
      */
     public Block getBlock() {
-        return state.getBlock();
+        return block;
     }
 }

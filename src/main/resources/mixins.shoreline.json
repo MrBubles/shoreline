@@ -55,8 +55,8 @@
     "gui.screen.MixinDisconnectedScreen",
     "gui.screen.MixinScreen",
     "gui.screen.MixinTitleScreen",
-    "item.MixinItemStack",
     "item.MixinFireworkRocketItem",
+    "item.MixinItemStack",
     "network.MixinClientConnection",
     "network.MixinClientPlayerEntity",
     "network.MixinClientPlayerInteractionManager",
@@ -86,10 +86,12 @@
     "render.entity.MixinWitherSkullEntityRenderer",
     "render.item.MixinHeldItemRenderer",
     "text.MixinTextVisitFactory",
-    "world.MixinBlockCollisionSpliterator",
     "world.MixinClientWorld"
   ],
   "injectors": {
     "defaultRequire": 1
-  }
+  },
+  "mixins": [
+    "block.MixinAbstractBlockState"
+  ]
 }

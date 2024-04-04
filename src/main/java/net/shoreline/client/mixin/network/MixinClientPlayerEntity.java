@@ -1,12 +1,12 @@
 package net.shoreline.client.mixin.network;
 
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.input.Input;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.MovementType;
+import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.network.packet.c2s.play.ClientCommandC2SPacket;
 import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
 import net.minecraft.util.Hand;
@@ -14,6 +14,7 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.shoreline.client.Shoreline;
 import net.shoreline.client.api.event.EventStage;
+import net.shoreline.client.impl.event.entity.LevitationEvent;
 import net.shoreline.client.impl.event.entity.SwingEvent;
 import net.shoreline.client.impl.event.entity.player.PlayerMoveEvent;
 import net.shoreline.client.impl.event.network.*;
@@ -237,6 +238,17 @@ public abstract class MixinClientPlayerEntity extends AbstractClientPlayerEntity
         }
     }
 
+    @Inject(method = "move", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/AbstractClientPlayerEntity;move(Lnet/minecraft/entity/MovementType;Lnet/minecraft/util/math/Vec3d;)V"), cancellable = true)
+    public void hookMove2(MovementType movementType, Vec3d movement, CallbackInfo ci) {
+        if (getActiveStatusEffects().containsKey(StatusEffects.LEVITATION)) {
+            LevitationEvent levitationEvent = new LevitationEvent();
+            Shoreline.EVENT_HANDLER.dispatch(levitationEvent);
+            if (levitationEvent.isCanceled()) {
+                removeStatusEffect(StatusEffects.LEVITATION);
+            }
+        }
+    }
+
     /**
      * @param x
      * @param z
@@ -279,16 +291,22 @@ public abstract class MixinClientPlayerEntity extends AbstractClientPlayerEntity
         }
     }
 
-    /**
-     * @param instance
-     * @return
-     */
-    @Redirect(method = "updateNausea", at = @At(value = "FIELD", target = "Lnet" +
-            "/minecraft/client/MinecraftClient;currentScreen:Lnet/minecraft/" +
-            "client/gui/screen/Screen;"))
-    private Screen hookCurrentScreen(MinecraftClient instance) {
-        //
-        return null;
+//    /**
+//     * @param instance
+//     * @return
+//     */
+//    @Redirect(method = "updateNausea", at = @At(value = "FIELD", target = "Lnet" +
+//            "/minecraft/client/MinecraftClient;currentScreen:Lnet/minecraft/" +
+//            "client/gui/screen/Screen;"))
+//    private Screen hookCurrentScreen(MinecraftClient instance) {
+//        //
+//        return null;
+//    }
+
+    @Inject(method = "updateNausea", at = @At(value = "HEAD"),
+            cancellable = true)
+    private void hookUpdateNausea(CallbackInfo ci) {
+        ci.cancel();
     }
 
     /**

@@ -19,10 +19,10 @@ import net.shoreline.client.api.event.listener.EventListener;
 import net.shoreline.client.api.module.ModuleCategory;
 import net.shoreline.client.api.module.ToggleModule;
 import net.shoreline.client.impl.event.TickEvent;
+import net.shoreline.client.impl.event.block.CollisionShapeEvent;
 import net.shoreline.client.impl.event.entity.player.PlayerJumpEvent;
 import net.shoreline.client.impl.event.network.PacketEvent;
 import net.shoreline.client.impl.event.network.PlayerUpdateEvent;
-import net.shoreline.client.impl.event.world.BlockCollisionEvent;
 import net.shoreline.client.init.Managers;
 import net.shoreline.client.init.Modules;
 import net.shoreline.client.mixin.accessor.AccessorKeyBinding;
@@ -64,7 +64,7 @@ public class JesusModule extends ToggleModule {
     }
 
     @EventListener
-    public void onBlockCollision(BlockCollisionEvent event) {
+    public void onCollisionShape(CollisionShapeEvent event) {
         BlockState state = event.getState();
         if (Modules.FLIGHT.isEnabled() || Modules.PACKET_FLY.isEnabled()
                 || mc.player.isSpectator() || mc.player.isOnFire()

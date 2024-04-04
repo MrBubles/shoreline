@@ -1,5 +1,6 @@
 package net.shoreline.client.impl.module.world;
 
+import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.shape.VoxelShapes;
@@ -10,7 +11,7 @@ import net.shoreline.client.api.event.listener.EventListener;
 import net.shoreline.client.api.module.ModuleCategory;
 import net.shoreline.client.api.module.ToggleModule;
 import net.shoreline.client.impl.event.TickEvent;
-import net.shoreline.client.impl.event.world.BlockCollisionEvent;
+import net.shoreline.client.impl.event.block.CollisionShapeEvent;
 import net.shoreline.client.init.Managers;
 import net.shoreline.client.util.world.BlockUtil;
 
@@ -42,14 +43,15 @@ public class AvoidModule extends ToggleModule {
     }
 
     @EventListener
-    public void onBlockCollision(BlockCollisionEvent event) {
+    public void onCollisionShape(CollisionShapeEvent event) {
         BlockPos pos = event.getPos();
-        if (fireConfig.getValue() && event.getBlock() == Blocks.FIRE
+        Block block = event.getState().getBlock();
+        if (fireConfig.getValue() && block == Blocks.FIRE
                 && mc.player.getY() < pos.getY() + 1.0
                 || cactiConfig.getValue()
-                && event.getBlock() == Blocks.CACTUS
+                && block == Blocks.CACTUS
                 || berryBushConfig.getValue()
-                && event.getBlock() == Blocks.SWEET_BERRY_BUSH
+                && block == Blocks.SWEET_BERRY_BUSH
                 || unloadedConfig.getValue()
                 && !BlockUtil.isBlockLoaded(pos.getX(), pos.getZ())) {
             event.cancel();
